@@ -8,6 +8,7 @@ const colors = {
   green: (opacity = 1) => `rgba(46, 204, 113, ${opacity})`,       
   orange: (opacity = 1) => `rgba(243, 156, 18, ${opacity})`,      
   red: (opacity = 1) => `rgba(231, 76, 60, ${opacity})`,          
+  primary: (opacity = 1) => `rgba(95, 158, 160, ${opacity})`,
   darkModeBlack: (opacity = 1) => `rgba(27, 27, 27, ${opacity})`,
   darkModeBlue: (opacity = 1) => `rgba(146, 156, 241, ${opacity})`,
   darkModeGrey: (opacity = 1) => `rgba(64, 64, 64, ${opacity})`,
