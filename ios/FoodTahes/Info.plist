@@ -49,8 +49,13 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Roboto-Italic-VariableFont_wdth,wght.ttf</string>
-		<string>Roboto-VariableFont_wdth,wght.ttf</string>
+		<string>Poppins-Black.ttf</string>
+		<string>Poppins-Bold.ttf</string>
+		<string>Poppins-ExtraBold.ttf</string>
+		<string>Poppins-Light.ttf</string>
+		<string>Poppins-Medium.ttf</string>
+		<string>Poppins-Regular.ttf</string>
+		<string>Poppins-SemiBold.ttf</string>
 	</array>
 </dict>
 </plist>

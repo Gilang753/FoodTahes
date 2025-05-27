@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { colors, fontType } from '../theme';
+import {View, Text, Image, StyleSheet} from 'react-native';
+import {colors, fontType} from '../theme';
 
-const FoodCard = ({ title, image }) => {
+const FoodCard = ({title, image, description}) => {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Text style={styles.title}>{title}</Text>
+      <Image source={{uri: image}} style={styles.image} />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.description}>{description}</Text>
+      </View>
     </View>
   );
 };
@@ -15,25 +18,32 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white(),
     borderRadius: 12,
-    padding: 10,
-    alignItems: 'center',
-    shadowColor: colors.black(0.1),
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-    marginBottom: 15,
+    overflow: 'hidden',
+    marginBottom: 16,
+    shadowColor: colors.black(),
+    shadowOpacity: 0.05,
+    shadowOffset: {width: 0, height: 4},
+    shadowRadius: 10,
+    elevation: 3,
   },
   image: {
-    width: 160,
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 10,
+    width: '100%',
+    height: 180,
+    resizeMode: 'cover',
+  },
+  textContainer: {
+    padding: 12,
   },
   title: {
-    fontFamily: fontType['Pop-Medium'],
-    fontSize: 14,
+    fontSize: 16,
+    fontFamily: fontType['Pop-SemiBold'],
     color: colors.black(),
-    textAlign: 'center',
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 13,
+    fontFamily: fontType['Pop-Regular'],
+    color: colors.grey(0.8),
   },
 });
 
