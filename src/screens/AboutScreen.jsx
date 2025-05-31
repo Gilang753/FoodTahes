@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white(),
     padding: 20,
+    paddingTop: 40,
   },
   logo: {
     width: 100,

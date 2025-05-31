@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
-  FlatList,
   StyleSheet,
   StatusBar,
   TouchableOpacity,
   SafeAreaView,
+  Animated,
 } from 'react-native';
 import { colors, fontType } from '../theme';
-import { SearchNormal1, Notification} from 'iconsax-react-native';
+import { SearchNormal1, Notification } from 'iconsax-react-native';
 import FoodCard from '../components/FoodCard';
 import foodData from '../data/foodData';
 
+const HEADER_HEIGHT = 80;
+
 const HomeScreen = () => {
   const [search, setSearch] = useState('');
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_HEIGHT],
+    outputRange: [0, -HEADER_HEIGHT],
+    extrapolate: 'clamp',
+  });
 
   const filteredFoods = foodData.filter(item =>
     item.title.toLowerCase().includes(search.toLowerCase())
@@ -29,8 +38,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={colors.white()} barStyle="dark-content" />
 
-      {/* Header dengan judul, ikon notifikasi, dan search */}
-      <View style={styles.header}>
+      <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }] }]}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>
             Food
@@ -54,22 +62,27 @@ const HomeScreen = () => {
         </View>
 
         <Text style={styles.subtitle}>Rekomendasi Makanan Sehat</Text>
-      </View>
+      </Animated.View>
 
-      {/* List makanan */}
-      <FlatList
+      <Animated.FlatList
         data={filteredFoods}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <FoodCard
             key={item.id}
+            id={item.id}
             title={item.title}
             image={item.image}
             description={item.description}
           />
         )}
+        contentContainerStyle={{ paddingTop: HEADER_HEIGHT, paddingBottom: 100, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20 }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
       />
     </SafeAreaView>
   );
@@ -79,17 +92,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white(),
+    paddingTop: 106,
   },
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.white(),
+    zIndex: 10,
     paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    
   },
   title: {
     fontSize: 26,

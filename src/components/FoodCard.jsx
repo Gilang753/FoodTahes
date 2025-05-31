@@ -1,16 +1,29 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {colors, fontType} from '../theme';
+import {useNavigation} from '@react-navigation/native';
 
-const FoodCard = ({title, image, description}) => {
+const FoodCard = ({id, title, image, description}) => {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('FoodDetail', {
+          id,
+          title,
+          image,
+          description,
+        })
+      }
+      style={styles.card}>
       <Image source={{uri: image}} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
