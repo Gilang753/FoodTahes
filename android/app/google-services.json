@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977268816118",
+    "project_id": "foodtahes",
+    "storage_bucket": "foodtahes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977268816118:android:2a9f739ca2d56490bd54d7",
+        "android_client_info": {
+          "package_name": "com.foodtahes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKOxexdYkK_6R2wvM83s4eSYi7kr9fxoI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

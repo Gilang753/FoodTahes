@@ -12,12 +12,15 @@ const FoodDetailScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleFavorite = () => {
-    if (isFavorite(id)) {
-      removeFavorite(id);
-    } else {
-      addToFavorite({ id, title, image, description });
-    }
-  };
+  if (isFavorite(id)) {
+    removeFavorite(id);
+    Alert.alert('Favorit dihapus');
+  } else {
+    addToFavorite({ id, title, image, description });
+    Alert.alert('Ditambahkan ke favorit');
+  }
+};
+
 
   const handleDelete = () => {
     setModalVisible(false);
@@ -32,6 +35,7 @@ const FoodDetailScreen = ({ route, navigation }) => {
           onPress: async () => {
             try {
               await deleteFood(id);
+              removeFavorite(id); // tambahkan baris ini
               Alert.alert('Sukses', 'Data berhasil dihapus');
               navigation.goBack();
             } catch (error) {

@@ -10,7 +10,7 @@ const FoodCard = ({id, title, image, description}) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate('FoodDetail', {
+        navigation.navigate('FoodDetail',{
           id,
           title,
           image,
