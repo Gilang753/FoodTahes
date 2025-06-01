@@ -1,21 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ScrollView
+} from 'react-native';
 import { colors, fontType } from '../theme';
+import { addFood } from '../api/FoodApi'; 
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Image} from 'react-native'; 
 
-const AddFoodScreen = () => {
+
+const AddFoodScreen = ({ navigation, route }) => {
+  
+  const { onRefresh } = route.params || {};
+
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleAdd = () => {
+  const pickImage = async () => {
+  const result = await launchImageLibrary({mediaType: 'photo', quality: 0.8});
+  if (!result.didCancel && result.assets && result.assets.length > 0) {
+    setImage(result.assets[0].uri);
+  }
+};
+
+
+  const handleAdd = async () => {
     if (!title || !image || !description) {
       Alert.alert('Error', 'Mohon lengkapi semua field!');
       return;
     }
-    Alert.alert('Sukses', 'Makanan berhasil ditambahkan!');
-    setTitle('');
-    setImage('');
-    setDescription('');
+
+    try {
+      await addFood({ title, image, description }); 
+      Alert.alert('Sukses', 'Makanan berhasil ditambahkan!');
+      setTitle('');
+      setImage('');
+      setDescription('');
+      onRefresh?.(); 
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (
@@ -32,13 +63,15 @@ const AddFoodScreen = () => {
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Link Gambar</Text>
-        <TextInput
-          style={styles.input}
-          value={image}
-          onChangeText={setImage}
-        />
-      </View>
+  <Text style={styles.label}>Gambar</Text>
+  <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+    {image ? (
+      <Image source={{ uri: image }} style={styles.previewImage} />
+    ) : (
+      <Text style={styles.imagePlaceholder}>Pilih gambar dari perangkat</Text>
+    )}
+  </TouchableOpacity>
+</View>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Deskripsi</Text>
@@ -71,6 +104,30 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     textAlign: 'center',
   },
+
+  imagePicker: {
+  borderWidth: 1,
+  borderColor: colors.grey(0.3),
+  borderRadius: 10,
+  padding: 12,
+  backgroundColor: colors.white(),
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 150,
+  marginBottom: 10,
+},
+imagePlaceholder: {
+  fontFamily: fontType['Pop-Regular'],
+  fontSize: 14,
+  color: colors.grey(0.6),
+},
+previewImage: {
+  width: '100%',
+  height: '100%',
+  borderRadius: 10,
+  resizeMode: 'cover',
+},
+
   inputGroup: {
     marginBottom: 16,
   },

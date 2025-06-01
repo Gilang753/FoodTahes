@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,16 +8,21 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Animated,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
 } from 'react-native';
 import { colors, fontType } from '../theme';
 import { SearchNormal1, Notification } from 'iconsax-react-native';
 import FoodCard from '../components/FoodCard';
-import foodData from '../data/foodData';
+import { getFoods } from '../api/FoodApi';
 
 const HEADER_HEIGHT = 80;
 
 const HomeScreen = () => {
   const [search, setSearch] = useState('');
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const headerTranslateY = scrollY.interpolate({
@@ -26,7 +31,22 @@ const HomeScreen = () => {
     extrapolate: 'clamp',
   });
 
-  const filteredFoods = foodData.filter(item =>
+  const fetchFoods = async () => {
+    try {
+      const data = await getFoods();
+      setFoods(data);
+    } catch (error) {
+      console.error('Gagal mengambil data makanan:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFoods();
+  }, []);
+
+  const filteredFoods = foods.filter(item =>
     item.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -64,26 +84,42 @@ const HomeScreen = () => {
         <Text style={styles.subtitle}>Rekomendasi Makanan Sehat</Text>
       </Animated.View>
 
-      <Animated.FlatList
-        data={filteredFoods}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <FoodCard
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            image={item.image}
-            description={item.description}
-          />
-        )}
-        contentContainerStyle={{ paddingTop: HEADER_HEIGHT, paddingBottom: 100, paddingHorizontal: 20 }}
-        showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        scrollEventThrottle={16}
-      />
+      {loading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color={colors.green(1)} />
+        </View>
+      ) : (
+        <Animated.FlatList
+          data={filteredFoods}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <FoodCard
+              id={item.id}
+              title={item.title}
+              image={item.image}
+              description={item.description}
+              onRefresh={fetchFoods}
+            />
+          )}
+          contentContainerStyle={{ paddingTop: HEADER_HEIGHT, paddingBottom: 100, paddingHorizontal: 20 }}
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          
+          scrollEventThrottle={16}
+          ListEmptyComponent={
+            <Text style={{ textAlign: 'center', marginTop: 20, fontFamily: fontType['Pop-Regular'] }}>
+              Tidak ada makanan ditemukan.
+            </Text>
+          }
+          refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={fetchFoods} />
+        }
+        />
+      )}
+      
     </SafeAreaView>
   );
 };
@@ -115,7 +151,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
-    
   },
   title: {
     fontSize: 26,
@@ -144,6 +179,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: fontType['Pop-SemiBold'],
     color: colors.black(),
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

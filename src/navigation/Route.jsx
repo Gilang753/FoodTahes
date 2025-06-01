@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {Home, Heart, AddCircle, Setting2} from 'iconsax-react-native';
-import { FavoriteProvider } from '../context/FavoriteContext';
+import {FavoriteProvider} from '../context/FavoriteContext';
 
 // Import semua screen
 import HomeScreen from '../screens/HomeScreen';
@@ -12,6 +12,7 @@ import AddFoodScreen from '../screens/AddFoodScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 import FoodDetailScreen from '../screens/FoodDetailScreen';
+import EditFoodScreen from '../screens/EditFoodScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -72,14 +73,17 @@ const Route = () => {
   return (
     <FavoriteProvider>
       <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="MainTabs" component={BottomTabs} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="FoodDetail" component={FoodDetailScreen} options={{ title: 'Detail Makanan' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="MainTabs" component={BottomTabs} />
+          <Stack.Screen name="About" component={AboutScreen} />
+          <Stack.Screen
+            name="FoodDetail"
+            component={FoodDetailScreen}
+          />
+          <Stack.Screen name="EditFood" component={EditFoodScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </FavoriteProvider>
-    
   );
 };
 

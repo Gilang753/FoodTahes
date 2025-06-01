@@ -21,7 +21,9 @@ const FoodCard = ({id, title, image, description}) => {
       <Image source={{uri: image}} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+  {description}
+</Text>
       </View>
     </TouchableOpacity>
   );
