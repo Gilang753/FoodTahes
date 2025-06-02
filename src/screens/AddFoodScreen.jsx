@@ -12,6 +12,8 @@ import { colors, fontType } from '../theme';
 import { addFood } from '../api/FoodApi'; 
 import {launchImageLibrary} from 'react-native-image-picker';
 import {Image} from 'react-native'; 
+import notifee, { TimestampTrigger, TriggerType, AndroidImportance } from '@notifee/react-native';
+
 
 
 const AddFoodScreen = ({ navigation, route }) => {
@@ -29,6 +31,10 @@ const AddFoodScreen = ({ navigation, route }) => {
   }
 };
 
+const [delay, setDelay] = useState(10); // default 10 detik
+
+
+
 
   const handleAdd = async () => {
     if (!title || !image || !description) {
@@ -44,10 +50,39 @@ const AddFoodScreen = ({ navigation, route }) => {
       setDescription('');
       onRefresh?.(); 
       navigation.goBack();
+      await scheduleNotification(delay);
     } catch (error) {
       Alert.alert('Error', error.message);
     }
   };
+
+const scheduleNotification = async (delaySeconds) => {
+  const date = new Date(Date.now() + delaySeconds * 1000);
+
+  await notifee.createTriggerNotification(
+    {
+      title: delaySeconds === 10 
+        ? 'Makanan sehat kesukaanmu berhasil ditambahkan!'
+        : 'Ingat cek makanan sehatmu!',
+      body: delaySeconds === 10 
+        ? 'Silakan lihat detail makanan yang baru saja kamu tambahkan.'
+        : 'Jangan lupa cek makanan sehatmu ya!',
+      android: {
+        channelId: await notifee.createChannel({
+          id: 'default',
+          name: 'Default Channel',
+          importance: AndroidImportance.HIGH,
+        }),
+        smallIcon: 'ic_launcher', // pastikan ada icon di Android
+      },
+    },
+    {
+      type: TriggerType.TIMESTAMP,
+      timestamp: date.getTime(),
+    }
+  );
+};
+
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -82,6 +117,30 @@ const AddFoodScreen = ({ navigation, route }) => {
           onChangeText={setDescription}
         />
       </View>
+<View style={styles.inputGroup}>
+  <Text style={styles.label}>Delay Notifikasi (detik)</Text>
+  <View style={{ flexDirection: 'row', gap: 10 }}>
+    {[10, 30].map((value) => (
+      <TouchableOpacity
+        key={value}
+        style={[
+          styles.delayButton,
+          delay === value && styles.delayButtonSelected
+        ]}
+        onPress={() => setDelay(value)}
+      >
+        <Text
+          style={[
+            styles.delayButtonText,
+            delay === value && styles.delayButtonTextSelected
+          ]}
+        >
+          {value} detik
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
 
       <TouchableOpacity style={styles.button} onPress={handleAdd}>
         <Text style={styles.buttonText}>Tambah</Text>
@@ -173,6 +232,26 @@ previewImage: {
     fontSize: 16,
     color: colors.white(),
   },
+  delayButton: {
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: colors.grey(0.5),
+},
+delayButtonSelected: {
+  backgroundColor: colors.green(0.2),
+  borderColor: colors.green(1),
+},
+delayButtonText: {
+  fontFamily: fontType['Pop-Regular'],
+  color: colors.grey(0.8),
+},
+delayButtonTextSelected: {
+  color: colors.green(1),
+  fontFamily: fontType['Pop-Medium'],
+},
+
 });
 
 export default AddFoodScreen;
